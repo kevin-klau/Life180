@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.form-field{
+    @apply bg-tertiary rounded ml-5 text-xl
+}
+
+.form-button{
+    @apply bg-secondary py-2 px-32 mt-3
+}

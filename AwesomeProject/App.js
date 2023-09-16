@@ -1,8 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
+import { useState, useEffect } from 'react';
+import * as Location from 'expo-location';
 
 export default function App() {
+  const [location, setLocation] = useState();
+
+  useEffect(() => {
+    const getPermission = async () => {
+      let { status } = await Location.requestForegroundPermissionAsync();
+      if (status !== 'granted') {
+        console.log("please give me your location");
+        return;
+      } else {
+        let currentLocation = await Location.getCurrentPositionAsync({});
+        setLocation(currentLocation);
+        console.log("found location")
+      }
+    }
+  
+    getPermission();
+  }, []);
+
   let [fontsLoaded] = useFonts({
     'Poppins-Bold': require('./assets/Poppins-Bold.ttf'),
     'Poppins-Light': require('./assets/Poppins-Light.ttf'),

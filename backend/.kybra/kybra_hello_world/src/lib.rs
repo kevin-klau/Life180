@@ -1938,6 +1938,20 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => {
+                let key = StableBTreeMap3KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_3_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow().contains_key(&key))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
+            4u8 => {
+                let key = StableBTreeMap4KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_4_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow().contains_key(&key))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -1953,6 +1967,20 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => {
+                let key = StableBTreeMap3KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_3_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow().get(&key))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
+            4u8 => {
+                let key = StableBTreeMap4KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_4_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow().get(&key))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -1969,6 +1997,22 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => {
+                let key = StableBTreeMap3KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                let value = StableBTreeMap3ValueType(value_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_3_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow_mut().insert(key, value))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
+            4u8 => {
+                let key = StableBTreeMap4KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                let value = StableBTreeMap4ValueType(value_py_object_ref.try_from_vm_value(vm)?);
+                STABLE_B_TREE_MAP_4_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow_mut().insert(key, value))
+                    .try_into_vm_value(vm)
+                    .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+            }
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -1983,6 +2027,14 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => STABLE_B_TREE_MAP_3_REF_CELL
+                .with(|map_ref_cell| map_ref_cell.borrow().is_empty())
+                .try_into_vm_value(vm)
+                .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
+            4u8 => STABLE_B_TREE_MAP_4_REF_CELL
+                .with(|map_ref_cell| map_ref_cell.borrow().is_empty())
+                .try_into_vm_value(vm)
+                .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -1997,6 +2049,70 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => STABLE_B_TREE_MAP_3_REF_CELL.with(|map_ref_cell| {
+                let (key_value_pairs, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(
+                        |(key_wrapper_type, value_wrapper_type)| -> Result<
+                            rustpython_vm::PyObjectRef,
+                            rustpython_vm::builtins::PyBaseExceptionRef,
+                        > {
+                            let key = key_wrapper_type
+                                .0
+                                .try_into_vm_value(vm)
+                                .map_err(|vmc_err| vm.new_type_error(vmc_err.0))?;
+                            let value = value_wrapper_type
+                                .0
+                                .try_into_vm_value(vm)
+                                .map_err(|vmc_err| vm.new_type_error(vmc_err.0))?;
+                            Ok(vm.ctx.new_tuple(vec![key, value]).into())
+                        },
+                    )
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(key_value_pair) => acc.0.push(key_value_pair),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(key_value_pairs).into());
+                }
+                Err(type_errors[0].clone())
+            }),
+            4u8 => STABLE_B_TREE_MAP_4_REF_CELL.with(|map_ref_cell| {
+                let (key_value_pairs, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(
+                        |(key_wrapper_type, value_wrapper_type)| -> Result<
+                            rustpython_vm::PyObjectRef,
+                            rustpython_vm::builtins::PyBaseExceptionRef,
+                        > {
+                            let key = key_wrapper_type
+                                .0
+                                .try_into_vm_value(vm)
+                                .map_err(|vmc_err| vm.new_type_error(vmc_err.0))?;
+                            let value = value_wrapper_type
+                                .0
+                                .try_into_vm_value(vm)
+                                .map_err(|vmc_err| vm.new_type_error(vmc_err.0))?;
+                            Ok(vm.ctx.new_tuple(vec![key, value]).into())
+                        },
+                    )
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(key_value_pair) => acc.0.push(key_value_pair),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(key_value_pairs).into());
+                }
+                Err(type_errors[0].clone())
+            }),
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -2011,6 +2127,50 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => STABLE_B_TREE_MAP_3_REF_CELL.with(|map_ref_cell| {
+                let (keys, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(|(key_wrapper_type, _)| {
+                        key_wrapper_type
+                            .0
+                            .try_into_vm_value(vm)
+                            .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+                    })
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(key) => acc.0.push(key),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(keys).into());
+                }
+                Err(type_errors[0].clone())
+            }),
+            4u8 => STABLE_B_TREE_MAP_4_REF_CELL.with(|map_ref_cell| {
+                let (keys, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(|(key_wrapper_type, _)| {
+                        key_wrapper_type
+                            .0
+                            .try_into_vm_value(vm)
+                            .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+                    })
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(key) => acc.0.push(key),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(keys).into());
+                }
+                Err(type_errors[0].clone())
+            }),
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -2025,6 +2185,14 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => STABLE_B_TREE_MAP_3_REF_CELL
+                .with(|map_ref_cell| map_ref_cell.borrow().len())
+                .try_into_vm_value(vm)
+                .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
+            4u8 => STABLE_B_TREE_MAP_4_REF_CELL
+                .with(|map_ref_cell| map_ref_cell.borrow().len())
+                .try_into_vm_value(vm)
+                .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -2040,6 +2208,30 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => {
+                let key = StableBTreeMap3KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                match STABLE_B_TREE_MAP_3_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow_mut().remove(&key))
+                {
+                    Some(value) => value
+                        .0
+                        .try_into_vm_value(vm)
+                        .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
+                    None => Ok(vm.ctx.none()),
+                }
+            }
+            4u8 => {
+                let key = StableBTreeMap4KeyType(key_py_object_ref.try_from_vm_value(vm)?);
+                match STABLE_B_TREE_MAP_4_REF_CELL
+                    .with(|map_ref_cell| map_ref_cell.borrow_mut().remove(&key))
+                {
+                    Some(value) => value
+                        .0
+                        .try_into_vm_value(vm)
+                        .map_err(|vmc_err| vm.new_type_error(vmc_err.0)),
+                    None => Ok(vm.ctx.none()),
+                }
+            }
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -2054,6 +2246,50 @@ impl Ic {
     ) -> rustpython_vm::PyResult {
         let memory_id: u8 = memory_id_py_object_ref.try_from_vm_value(vm)?;
         match memory_id {
+            3u8 => STABLE_B_TREE_MAP_3_REF_CELL.with(|map_ref_cell| {
+                let (values, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(|(_, value_wrapper_type)| {
+                        value_wrapper_type
+                            .0
+                            .try_into_vm_value(vm)
+                            .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+                    })
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(value) => acc.0.push(value),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(values).into());
+                }
+                Err(type_errors[0].clone())
+            }),
+            4u8 => STABLE_B_TREE_MAP_4_REF_CELL.with(|map_ref_cell| {
+                let (values, type_errors) = map_ref_cell
+                    .borrow()
+                    .iter()
+                    .map(|(_, value_wrapper_type)| {
+                        value_wrapper_type
+                            .0
+                            .try_into_vm_value(vm)
+                            .map_err(|vmc_err| vm.new_type_error(vmc_err.0))
+                    })
+                    .fold((vec![], vec![]), |mut acc, result| {
+                        match result {
+                            Ok(value) => acc.0.push(value),
+                            Err(type_error) => acc.1.push(type_error),
+                        }
+                        acc
+                    });
+                if type_errors.is_empty() {
+                    return Ok(vm.ctx.new_list(values).into());
+                }
+                Err(type_errors[0].clone())
+            }),
             _ => Err(vm.new_lookup_error(format!(
                 "memory_id {} does not have an associated StableBTreeMap",
                 memory_id
@@ -2121,7 +2357,139 @@ impl Ic {
         ic_cdk::api::trap(&message)
     }
 }
-thread_local! { static MEMORY_MANAGER_REF_CELL : std :: cell :: RefCell < ic_stable_structures :: memory_manager :: MemoryManager < ic_stable_structures :: DefaultMemoryImpl > > = std :: cell :: RefCell :: new (ic_stable_structures :: memory_manager :: MemoryManager :: init (ic_stable_structures :: DefaultMemoryImpl :: default ())) ; }
+thread_local! { static MEMORY_MANAGER_REF_CELL : std :: cell :: RefCell < ic_stable_structures :: memory_manager :: MemoryManager < ic_stable_structures :: DefaultMemoryImpl > > = std :: cell :: RefCell :: new (ic_stable_structures :: memory_manager :: MemoryManager :: init (ic_stable_structures :: DefaultMemoryImpl :: default ())) ; static STABLE_B_TREE_MAP_3_REF_CELL : std :: cell :: RefCell < ic_stable_structures :: StableBTreeMap < StableBTreeMap3KeyType , StableBTreeMap3ValueType , ic_stable_structures :: memory_manager :: VirtualMemory < ic_stable_structures :: DefaultMemoryImpl > > > = std :: cell :: RefCell :: new (ic_stable_structures :: StableBTreeMap :: init (MEMORY_MANAGER_REF_CELL . with (| m | { m . borrow () . get (ic_stable_structures :: memory_manager :: MemoryId :: new (3u8)) }) ,)) ; static STABLE_B_TREE_MAP_4_REF_CELL : std :: cell :: RefCell < ic_stable_structures :: StableBTreeMap < StableBTreeMap4KeyType , StableBTreeMap4ValueType , ic_stable_structures :: memory_manager :: VirtualMemory < ic_stable_structures :: DefaultMemoryImpl > > > = std :: cell :: RefCell :: new (ic_stable_structures :: StableBTreeMap :: init (MEMORY_MANAGER_REF_CELL . with (| m | { m . borrow () . get (ic_stable_structures :: memory_manager :: MemoryId :: new (4u8)) }) ,)) ; }
+#[derive(
+    candid :: CandidType,
+    candid :: Deserialize,
+    CdkActTryFromVmValue,
+    Ord,
+    PartialOrd,
+    Eq,
+    PartialEq,
+    Clone,
+)]
+struct StableBTreeMap3KeyType((String));
+impl CdkActTryIntoVmValue<&rustpython::vm::VirtualMachine, rustpython::vm::PyObjectRef>
+    for StableBTreeMap3KeyType
+{
+    fn try_into_vm_value(
+        self,
+        vm: &rustpython::vm::VirtualMachine,
+    ) -> Result<rustpython::vm::PyObjectRef, CdkActTryIntoVmValueError> {
+        Ok(self.0.try_into_vm_value(vm)?)
+    }
+}
+impl ic_stable_structures::Storable for StableBTreeMap3KeyType {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        std::borrow::Cow::Owned(candid::Encode!(self).unwrap_or_trap())
+    }
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        candid::Decode!(&bytes, Self).unwrap_or_trap()
+    }
+}
+impl ic_stable_structures::BoundedStorable for StableBTreeMap3KeyType {
+    const MAX_SIZE: u32 = 10u32;
+    const IS_FIXED_SIZE: bool = false;
+}
+#[derive(
+    candid :: CandidType,
+    candid :: Deserialize,
+    CdkActTryFromVmValue,
+    Ord,
+    PartialOrd,
+    Eq,
+    PartialEq,
+    Clone,
+)]
+struct StableBTreeMap3ValueType((String));
+impl CdkActTryIntoVmValue<&rustpython::vm::VirtualMachine, rustpython::vm::PyObjectRef>
+    for StableBTreeMap3ValueType
+{
+    fn try_into_vm_value(
+        self,
+        vm: &rustpython::vm::VirtualMachine,
+    ) -> Result<rustpython::vm::PyObjectRef, CdkActTryIntoVmValueError> {
+        Ok(self.0.try_into_vm_value(vm)?)
+    }
+}
+impl ic_stable_structures::Storable for StableBTreeMap3ValueType {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        std::borrow::Cow::Owned(candid::Encode!(self).unwrap_or_trap())
+    }
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        candid::Decode!(&bytes, Self).unwrap_or_trap()
+    }
+}
+impl ic_stable_structures::BoundedStorable for StableBTreeMap3ValueType {
+    const MAX_SIZE: u32 = 10u32;
+    const IS_FIXED_SIZE: bool = false;
+}
+#[derive(
+    candid :: CandidType,
+    candid :: Deserialize,
+    CdkActTryFromVmValue,
+    Ord,
+    PartialOrd,
+    Eq,
+    PartialEq,
+    Clone,
+)]
+struct StableBTreeMap4KeyType((String));
+impl CdkActTryIntoVmValue<&rustpython::vm::VirtualMachine, rustpython::vm::PyObjectRef>
+    for StableBTreeMap4KeyType
+{
+    fn try_into_vm_value(
+        self,
+        vm: &rustpython::vm::VirtualMachine,
+    ) -> Result<rustpython::vm::PyObjectRef, CdkActTryIntoVmValueError> {
+        Ok(self.0.try_into_vm_value(vm)?)
+    }
+}
+impl ic_stable_structures::Storable for StableBTreeMap4KeyType {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        std::borrow::Cow::Owned(candid::Encode!(self).unwrap_or_trap())
+    }
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        candid::Decode!(&bytes, Self).unwrap_or_trap()
+    }
+}
+impl ic_stable_structures::BoundedStorable for StableBTreeMap4KeyType {
+    const MAX_SIZE: u32 = 10u32;
+    const IS_FIXED_SIZE: bool = false;
+}
+#[derive(
+    candid :: CandidType,
+    candid :: Deserialize,
+    CdkActTryFromVmValue,
+    Ord,
+    PartialOrd,
+    Eq,
+    PartialEq,
+    Clone,
+)]
+struct StableBTreeMap4ValueType((candid::Int));
+impl CdkActTryIntoVmValue<&rustpython::vm::VirtualMachine, rustpython::vm::PyObjectRef>
+    for StableBTreeMap4ValueType
+{
+    fn try_into_vm_value(
+        self,
+        vm: &rustpython::vm::VirtualMachine,
+    ) -> Result<rustpython::vm::PyObjectRef, CdkActTryIntoVmValueError> {
+        Ok(self.0.try_into_vm_value(vm)?)
+    }
+}
+impl ic_stable_structures::Storable for StableBTreeMap4ValueType {
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        std::borrow::Cow::Owned(candid::Encode!(self).unwrap_or_trap())
+    }
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        candid::Decode!(&bytes, Self).unwrap_or_trap()
+    }
+}
+impl ic_stable_structures::BoundedStorable for StableBTreeMap4ValueType {
+    const MAX_SIZE: u32 = 10u32;
+    const IS_FIXED_SIZE: bool = false;
+}
 pub trait UnwrapOrTrapWithMessage<T> {
     fn unwrap_or_trap(self, err_message: &str) -> T;
 }
@@ -2303,27 +2671,78 @@ fn post_upgrade() {
         });
     });
 }
-#[ic_cdk_macros::query(name = "get_message")]
-#[candid::candid_method(query, rename = "get_message")]
-async fn _cdk_user_defined_get_message() -> (String) {
+#[ic_cdk_macros::query(name = "verifyUser")]
+#[candid::candid_method(query, rename = "verifyUser")]
+async fn _cdk_user_defined_verifyUser(
+    _cdk_user_defined_user: String,
+    _cdk_user_defined_passw: String,
+) -> (bool) {
     let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
         .unwrap_or_trap("SystemError: missing python interpreter");
     let vm = &interpreter.vm;
-    let params = ();
-    call_global_python_function("get_message", params)
+    let params = (
+        _cdk_user_defined_user
+            .try_into_vm_value(vm)
+            .unwrap_or_trap(),
+        _cdk_user_defined_passw
+            .try_into_vm_value(vm)
+            .unwrap_or_trap(),
+    );
+    call_global_python_function("verifyUser", params)
         .await
         .unwrap_or_trap()
 }
-#[ic_cdk_macros::update(name = "set_message")]
-#[candid::candid_method(update, rename = "set_message")]
-async fn _cdk_user_defined_set_message(_cdk_user_defined_new_message: String) -> () {
+#[ic_cdk_macros::query(name = "getUserScore")]
+#[candid::candid_method(query, rename = "getUserScore")]
+async fn _cdk_user_defined_getUserScore(_cdk_user_defined_id: String) -> (candid::Int) {
     let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
         .unwrap_or_trap("SystemError: missing python interpreter");
     let vm = &interpreter.vm;
-    let params = (_cdk_user_defined_new_message
-        .try_into_vm_value(vm)
-        .unwrap_or_trap(),);
-    call_global_python_function("set_message", params)
+    let params = (_cdk_user_defined_id.try_into_vm_value(vm).unwrap_or_trap(),);
+    call_global_python_function("getUserScore", params)
+        .await
+        .unwrap_or_trap()
+}
+#[ic_cdk_macros::update(name = "createUser")]
+#[candid::candid_method(update, rename = "createUser")]
+async fn _cdk_user_defined_createUser(
+    _cdk_user_defined_user: String,
+    _cdk_user_defined_passw: String,
+) -> (bool) {
+    let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
+        .unwrap_or_trap("SystemError: missing python interpreter");
+    let vm = &interpreter.vm;
+    let params = (
+        _cdk_user_defined_user
+            .try_into_vm_value(vm)
+            .unwrap_or_trap(),
+        _cdk_user_defined_passw
+            .try_into_vm_value(vm)
+            .unwrap_or_trap(),
+    );
+    call_global_python_function("createUser", params)
+        .await
+        .unwrap_or_trap()
+}
+#[ic_cdk_macros::update(name = "setIncrementUserScore")]
+#[candid::candid_method(update, rename = "setIncrementUserScore")]
+async fn _cdk_user_defined_setIncrementUserScore(_cdk_user_defined_id: String) -> () {
+    let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
+        .unwrap_or_trap("SystemError: missing python interpreter");
+    let vm = &interpreter.vm;
+    let params = (_cdk_user_defined_id.try_into_vm_value(vm).unwrap_or_trap(),);
+    call_global_python_function("setIncrementUserScore", params)
+        .await
+        .unwrap_or_trap()
+}
+#[ic_cdk_macros::update(name = "setDecrementUserScore")]
+#[candid::candid_method(update, rename = "setDecrementUserScore")]
+async fn _cdk_user_defined_setDecrementUserScore(_cdk_user_defined_id: String) -> () {
+    let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
+        .unwrap_or_trap("SystemError: missing python interpreter");
+    let vm = &interpreter.vm;
+    let params = (_cdk_user_defined_id.try_into_vm_value(vm).unwrap_or_trap(),);
+    call_global_python_function("setDecrementUserScore", params)
         .await
         .unwrap_or_trap()
 }

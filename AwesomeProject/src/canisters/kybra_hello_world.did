@@ -1,0 +1,7 @@
+service : () -> {
+  createUser : (text, text) -> (bool);
+  getUserScore : (text) -> (int) query;
+  setDecrementUserScore : (text) -> ();
+  setIncrementUserScore : (text) -> ();
+  verifyUser : (text, text) -> (bool) query;
+}
