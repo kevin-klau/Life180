@@ -1,11 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
 export default function App() {
+  let [fontsLoaded] = useFonts({
+    'Poppins-Bold': require('./assets/Poppins-Bold.ttf'),
+    'Poppins-Light': require('./assets/Poppins-Light.ttf'),
+  });
+  
+  if (!fontsLoaded) {
+      return <AppLoading />;
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <View style={styles.whiteContainer}>
+        <Text style={{ fontFamily: 'Poppins-Bold', fontSize:'50px' }}>Life 180</Text>
+        <Text style={{ fontFamily: 'Poppins-Bold', fontSize:'18px'}}>Turn your life around</Text>
+        <StatusBar style="auto" />
+      </View>
     </View>
   );
 }
@@ -13,8 +28,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#00D1FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  whiteContainer: {
+    width: '80%',
+    height: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
