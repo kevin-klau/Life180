@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./Menu.css";
-// import { createUser, getUserScore, setDecrementUserScore, setIncrementUserScore, verifyUser } from "../canisters/kybra_hello_world.did"; 
+import {createActor} from "../canisters/index"
 
-const Menu = () => {
+
+const Menu = ({ loggedIn, setLoggedIn }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -14,34 +15,36 @@ const Menu = () => {
 
                 <div className="bg-secondary rounded-3xl p-1 m-3 px-32 mb-10"></div>
 
-                <div className="flex flex-row mt-3">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        className="form-field"
-                        type="text"
-                        id="name"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
+                <div className="ml-16">
+                    <div className="flex flex-row mt-3">
+                        <label htmlFor="name">Name:</label>
+                        <input
+                            className="form-field"
+                            type="text"
+                            id="name"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
 
-                <div className="flex flex-row mt-3">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        className="form-field"
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <div className="flex flex-row mt-3">
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            className="form-field"
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div className="flex flex-col mt-8">
-                    <button className="form-button" onClick={() => {}}>
+                    <button className="form-button" onClick={() => {setLoggedIn(true)}}>
                         Submit
                     </button>
 
-                    <button className="form-button" onClick={() => {}}>
+                    <button className="form-button" onClick={() => {createActor}}>
                         Create New Account
                     </button>
                 </div>
