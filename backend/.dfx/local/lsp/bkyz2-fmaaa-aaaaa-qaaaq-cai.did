@@ -1,1 +1,7 @@
-service : { get_message : () -> (text) query; set_message : (text) -> () }
+service : {
+  createUser : (text, text) -> ();
+  getUserScore : (text) -> (int) query;
+  setDecrementUserScore : (text) -> ();
+  setIncrementUserScore : (text) -> ();
+  verifyUser : (text, text) -> (bool) query;
+}

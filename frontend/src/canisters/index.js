@@ -40,4 +40,4 @@ export const createActor = (canisterId, options = {}) => {
   });
 };
 
-export const kybra_hello_world = createActor(canisterId);
+// export const kybra_hello_world = createActor(canisterId);

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./Menu.css";
-import {createActor} from "../canisters/index"
 
 
-const Menu = ({ loggedIn, setLoggedIn }) => {
+const Menu = ({ loggedIn, setLoggedIn, actor }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -40,11 +39,21 @@ const Menu = ({ loggedIn, setLoggedIn }) => {
                 </div>
 
                 <div className="flex flex-col mt-8">
-                    <button className="form-button" onClick={() => {setLoggedIn(true)}}>
+                    <button className="form-button" 
+                        onClick={async () => {
+                            const verify = await actor.verifyUser(username, password)
+                            verify
+                            && 
+                            setLoggedIn(true);
+                        }}>
                         Submit
                     </button>
 
-                    <button className="form-button" onClick={() => {createActor}}>
+                    <button className="form-button" 
+                        onClick={async () => { 
+                            actor.createUser(username, password);
+                            setLoggedIn(true);
+                        }}>
                         Create New Account
                     </button>
                 </div>

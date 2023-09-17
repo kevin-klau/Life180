@@ -2388,7 +2388,7 @@ impl ic_stable_structures::Storable for StableBTreeMap3KeyType {
     }
 }
 impl ic_stable_structures::BoundedStorable for StableBTreeMap3KeyType {
-    const MAX_SIZE: u32 = 10u32;
+    const MAX_SIZE: u32 = 1000u32;
     const IS_FIXED_SIZE: bool = false;
 }
 #[derive(
@@ -2421,7 +2421,7 @@ impl ic_stable_structures::Storable for StableBTreeMap3ValueType {
     }
 }
 impl ic_stable_structures::BoundedStorable for StableBTreeMap3ValueType {
-    const MAX_SIZE: u32 = 10u32;
+    const MAX_SIZE: u32 = 1000u32;
     const IS_FIXED_SIZE: bool = false;
 }
 #[derive(
@@ -2454,7 +2454,7 @@ impl ic_stable_structures::Storable for StableBTreeMap4KeyType {
     }
 }
 impl ic_stable_structures::BoundedStorable for StableBTreeMap4KeyType {
-    const MAX_SIZE: u32 = 10u32;
+    const MAX_SIZE: u32 = 1000u32;
     const IS_FIXED_SIZE: bool = false;
 }
 #[derive(
@@ -2487,7 +2487,7 @@ impl ic_stable_structures::Storable for StableBTreeMap4ValueType {
     }
 }
 impl ic_stable_structures::BoundedStorable for StableBTreeMap4ValueType {
-    const MAX_SIZE: u32 = 10u32;
+    const MAX_SIZE: u32 = 1000u32;
     const IS_FIXED_SIZE: bool = false;
 }
 pub trait UnwrapOrTrapWithMessage<T> {
@@ -2708,7 +2708,7 @@ async fn _cdk_user_defined_getUserScore(_cdk_user_defined_id: String) -> (candid
 async fn _cdk_user_defined_createUser(
     _cdk_user_defined_user: String,
     _cdk_user_defined_passw: String,
-) -> (bool) {
+) -> () {
     let interpreter = unsafe { INTERPRETER_OPTION.as_mut() }
         .unwrap_or_trap("SystemError: missing python interpreter");
     let vm = &interpreter.vm;

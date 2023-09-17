@@ -1,0 +1,14 @@
+.container{
+    border-radius: 20px;
+    background: white;
+    display: grid;
+    place-items: center;
+    height: calc(100vh-(40px));
+    }
+
+.background{
+    background: #62E3FF;
+    height: 100%;
+    padding: 20px;
+
+}

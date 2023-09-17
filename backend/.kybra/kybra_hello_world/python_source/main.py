@@ -1,38 +1,64 @@
-from kybra import query, update, void, Opt, StableBTreeMap, Record, float32, Vec
+from kybra import query, update, void, Opt, StableBTreeMap, Record, float32, Vec, ic
 
 # This is a global variable that is stored on the heap
-userPassw = StableBTreeMap[str, str](memory_id=3, max_key_size=10, max_value_size=10)
-userScore = StableBTreeMap[str, int](memory_id=4, max_key_size=10, max_value_size=10)
+userPassw = StableBTreeMap[str, str](memory_id=3, max_key_size=1000, max_value_size=1000)
+userScore = StableBTreeMap[str, int](memory_id=4, max_key_size=1000, max_value_size=1000)
 
 # ADDING NEW USERS
 @query
 def verifyUser(user: str, passw: str) -> bool:
     global userPassw
+    ic.print("\nUSER VERIFICATION")
+    ic.print(user)
+    ic.print(passw)
     if (userPassw.get(user) == passw):
         return True
     else:
         return False
 
 @update
-def createUser(user: str, passw: str) -> bool:
+def createUser(user: str, passw: str) -> void:
     global userPassw
+    ic.print("\nNEW USER CREATED")
+    ic.print(user)
+    ic.print(passw)
     userPassw.insert(user, passw)
 
 # USER SCORES
 @query
 def getUserScore(id: str) -> int:
     global userScore
-    return userScore.get(id)
+    ic.print("\nUSER SCORE GETTED CREATED")
+    ic.print(id)
+
+    score = userScore.get(id)
+    if score == None:
+        return 0
+    else:
+        return score
 
 @update
 def setIncrementUserScore(id: str) -> void:
     global userScore
-    userScore[id] = userScore[id] + 1 
+    score = userScore.get(id)
+
+    if score != None:
+        score += 1
+    else:
+        score = 1
+    userScore.insert(id, score)
+
 
 @update
 def setDecrementUserScore(id: str) -> void:
     global userScore
-    userScore[id] = userScore[id] - 1
+    score = userScore.get(id)
+
+    if score != None:
+        score -= 1
+    else:
+        score = -1
+    userScore.insert(id, score)
 
 """
 # Creating Smart Contract 

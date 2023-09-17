@@ -1,7 +1,10 @@
 export const idlFactory = ({ IDL }) => {
   return IDL.Service({
-    'get_message' : IDL.Func([], [IDL.Text], ['query']),
-    'set_message' : IDL.Func([IDL.Text], [], []),
+    'createUser' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'getUserScore' : IDL.Func([IDL.Text], [IDL.Int], ['query']),
+    'setDecrementUserScore' : IDL.Func([IDL.Text], [], []),
+    'setIncrementUserScore' : IDL.Func([IDL.Text], [], []),
+    'verifyUser' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

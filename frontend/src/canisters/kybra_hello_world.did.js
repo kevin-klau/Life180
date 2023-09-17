@@ -1,6 +1,6 @@
 export const idlFactory = ({ IDL }) => {
   return IDL.Service({
-    'createUser' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
+    'createUser' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'getUserScore' : IDL.Func([IDL.Text], [IDL.Int], ['query']),
     'setDecrementUserScore' : IDL.Func([IDL.Text], [], []),
     'setIncrementUserScore' : IDL.Func([IDL.Text], [], []),
