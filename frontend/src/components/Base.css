@@ -2,6 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
-.text-bottom{
-    @apply text-black text-3xl
+@font-face {
+    font-family: theFont;
+    src: url(./Poppins-Bold.ttf);
+  }
+  
+#ViewContent{
+    height: 85%;
+    color: black;
+    overflow-x: scroll;
+}
+
+#TheContent{
+    height: 85vh;
+    width: 85vw;
+    background-color: white;
+    border-radius: 20px;
+    overflow-x:hidden;
+}
+
+#LocationOrFriend{
+    height:15%;
+    background-color: #D9D9D9 ;
+    border-bottom-right-radius:20px;
+    border-bottom-left-radius:20px;
+}
+
+#LocationIcon{
+    Margin-left: 30%;
+    width: 20%;
+    color: black;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    transition: 0.3s;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#LocationIcon:hover{
+    color:#0D08FB;
+}
+
+#locationText{
+    font-size: 25px;
+    font-family: theFont; 
+}
+
+#LocationImage{
+    width: 40%;
+    height: 40%;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-bottom: 3px;
+}
+
+#FriendsIcon{
+    Margin-right: 30%;
+    width: 20%;
+    color: black;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    transition: 0.3s;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#FriendsText{
+    font-size: 25px;
+    font-family: theFont; 
+    font-weight:bold;
+}
+
+#FriendsImage{
+    width: 40%;
+    height: 40%;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-bottom: 3px;
+}
+
+#FriendsIcon:hover{
+    color:#0D08FB;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }

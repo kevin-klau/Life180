@@ -1,3 +1,78 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: theFontNorm;
+    src: url(./Poppins-Medium.ttf);
+}
+
+@font-face {
+    font-family: theFontBold;
+    src: url(./Poppins-Bold.ttf);
+}
+
+#FriendsContainer{
+    min-width:85vw;
+    
+}
+
+#FriendsTitle{
+    font-family: theFontBold;
+    font-size: 45px;
+    margin-top: 20px;
+}
+
+#NotifContainer{
+    overflow-y: scroll;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding-left:15vw;
+    padding-right:15vw;
+    height: 60vh;
+}
+
+.cropimg{
+    width: 75px;
+    height: 75px;
+    position: relative;
+    -webkit-border-radius: 37.5px;
+    -moz-border-radius: 37.5px;
+    border-radius: 37.5px;
+    overflow:hidden;
+    margin-top: 5px;
+    margin-bottom: -10px;
+}
+
+#FriendsDisplay{
+    align-items: center;
+    justify-content: center;
+    font-family: theFontNorm;
+    font-size: 10px;
+    border-radius: 30px;
+    
+    margin-top: 15px;
+    overflow-y: hidden;
+}
+.pass{
+    background-color: #5CFF4E;
+}
+
+.fail{
+    background-color: #FF4E4E;
+}
+
+.prompt{
+    background-color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 40px;
+}
+
+
+::-webkit-scrollbar {
+    display: none;
+}
