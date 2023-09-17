@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .form-field{
-    @apply bg-tertiary rounded ml-5 text-xl
+    @apply bg-tertiary rounded ml-5 text-xl pl-3
 }
 
 .form-button{

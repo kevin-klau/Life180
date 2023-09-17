@@ -8,7 +8,6 @@ import Contracts from "./components/Contracts";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createActor } from "./canisters";
-import { HttpAgent } from "@dfinity/agent";
 
 
 function App() {
@@ -31,7 +30,7 @@ function App() {
           <Base/>
           <BrowserRouter>
             <Routes>
-              <Route path="" exact component={Hero} />
+              <Route path="/" component={Hero} />
               <Route path="/friends" component={Friends} />
               <Route path="/contracts" component={Contracts} />
             </Routes>
